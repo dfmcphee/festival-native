@@ -1396,22 +1396,10 @@ joined:false};},
 componentWillMount:function(){var _this=this;
 this.socket = io('festival-prod.mcfeed.me',{jsonp:false});
 
-var name=AsyncStorage.getItem(STORAGE_KEY);
-if(name !== null){
-this.socket.emit('identify',name);
-this.setState({joined:true});}
-
-
 BackgroundGeolocation.configure({
 desiredAccuracy:0,
 stationaryRadius:50,
-distanceFilter:50,
-disableElasticity:false,
-locationUpdateInterval:5000,
-minimumActivityRecognitionConfidence:80,
-fastestLocationUpdateInterval:5000,
-activityRecognitionInterval:10000,
-stopTimeout:0,
+distanceFilter:10,
 activityType:'OtherNavigation'});
 
 
@@ -1445,12 +1433,16 @@ console.log('- [js] BackgroundGeolocation received current position: ',JSON.stri
 this._loadInitialState().done();},
 
 
+_stopBackgroundGeolocation:function(){
+BackgroundGeolocation.stop();},
+
 
 _loadInitialState:function callee$0$0(){var 
 
-value;return regeneratorRuntime.async(function callee$0$0$(context$1$0){while(1) switch(context$1$0.prev = context$1$0.next){case 0:context$1$0.prev = 0;context$1$0.next = 3;return regeneratorRuntime.awrap(AsyncStorage.getItem(STORAGE_KEY));case 3:value = context$1$0.sent;
-if(value !== null){
-this.setState({name:value});}context$1$0.next = 10;break;case 7:context$1$0.prev = 7;context$1$0.t0 = context$1$0['catch'](0);
+name;return regeneratorRuntime.async(function callee$0$0$(context$1$0){while(1) switch(context$1$0.prev = context$1$0.next){case 0:context$1$0.prev = 0;context$1$0.next = 3;return regeneratorRuntime.awrap(AsyncStorage.getItem(STORAGE_KEY));case 3:name = context$1$0.sent;
+if(name && name !== null){
+this.socket.emit('identify',name);
+this.setState({name:name,joined:true});}context$1$0.next = 10;break;case 7:context$1$0.prev = 7;context$1$0.t0 = context$1$0['catch'](0);
 
 
 console.log('AsyncStorage error: ' + context$1$0.t0.message);case 10:case 'end':return context$1$0.stop();}},null,this,[[0,7]]);},
@@ -1458,15 +1450,15 @@ console.log('AsyncStorage error: ' + context$1$0.t0.message);case 10:case 'end':
 
 
 join:function(name){
-this.changeName(name);},
+this._changeName(name);},
 
 
-changeName:function callee$0$0(selectedValue){return regeneratorRuntime.async(function callee$0$0$(context$1$0){while(1) switch(context$1$0.prev = context$1$0.next){case 0:
+_changeName:function callee$0$0(name){return regeneratorRuntime.async(function callee$0$0$(context$1$0){while(1) switch(context$1$0.prev = context$1$0.next){case 0:
 this.socket.emit('identify',name);
-this.setState({joined:true,name:name});context$1$0.prev = 2;context$1$0.next = 5;return regeneratorRuntime.awrap(
+this.setState({name:name,joined:true});context$1$0.prev = 2;context$1$0.next = 5;return regeneratorRuntime.awrap(
 
 
-AsyncStorage.setItem(STORAGE_KEY,selectedValue));case 5:context$1$0.next = 10;break;case 7:context$1$0.prev = 7;context$1$0.t0 = context$1$0['catch'](2);
+AsyncStorage.setItem(STORAGE_KEY,name));case 5:context$1$0.next = 10;break;case 7:context$1$0.prev = 7;context$1$0.t0 = context$1$0['catch'](2);
 
 console.log('AsyncStorage error: ' + context$1$0.t0.message);case 10:case 'end':return context$1$0.stop();}},null,this,[[2,7]]);},
 
@@ -71875,26 +71867,21 @@ React.AppRegistry;var StyleSheet=React.StyleSheet;var Text=React.Text;var Status
 var JoinView=React.createClass({displayName:'JoinView',
 mixins:[MapboxGLMap.Mixin],
 
-getInitialState:function(){var _this=this;
-this.props.socket.on('socketConnected',function(data){
-console.log('Socket connected: ' + data.socketId);
-_this.setState({socketId:data.socketId});});
-
-
+getInitialState:function(){
 return {
 name:''};},
 
 
 
-render:function(){var _this2=this;
+render:function(){var _this=this;
 return (
 React.createElement(View,{style:styles.container},
 React.createElement(TextInput,{
 style:styles.nameInput,
-onChangeText:function(name){return _this2.setState({name:name});},
+onChangeText:function(name){return _this.setState({name:name});},
 value:this.state.name}),
 
-React.createElement(TouchableOpacity,{style:styles.joinButton,onPress:function(){return _this2.props.join(_this2.state.name);}},
+React.createElement(TouchableOpacity,{style:styles.joinButton,onPress:function(){return _this.props.join(_this.state.name);}},
 React.createElement(Text,null,'Join'))));}});
 
 

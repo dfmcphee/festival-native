@@ -71,14 +71,18 @@ var festival = React.createClass({
     });
 
     this._loadInitialState().done();
-    // BackgroundGeolocation.stop();
+  },
+
+  _stopBackgroundGeolocation() {
+    BackgroundGeolocation.stop();
   },
 
   async _loadInitialState() {
     try {
-      var value = await AsyncStorage.getItem(STORAGE_KEY);
-      if (value !== null){
-        this.setState({name: value});
+      var name = await AsyncStorage.getItem(STORAGE_KEY);
+      if (name && name !== null) {
+        this.socket.emit('identify', name);
+        this.setState({name: name, joined: true});
       }
     } catch (error) {
       console.log('AsyncStorage error: ' + error.message);
@@ -89,12 +93,12 @@ var festival = React.createClass({
     this._changeName(name);
   },
 
-  async _changeName(selectedValue) {
+  async _changeName(name) {
     this.socket.emit('identify', name);
-    this.setState({joined: true, name: name});
+    this.setState({name: name, joined: true});
 
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, selectedValue);
+      await AsyncStorage.setItem(STORAGE_KEY, name);
     } catch (error) {
       console.log('AsyncStorage error: ' + error.message);
     }

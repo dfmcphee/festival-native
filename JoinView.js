@@ -17,11 +17,6 @@ var JoinView = React.createClass({
   mixins: [MapboxGLMap.Mixin],
 
   getInitialState() {
-    this.props.socket.on('socketConnected', (data) => {
-      console.log('Socket connected: ' + data.socketId);
-      this.setState({socketId: data.socketId});
-    });
-
     return {
       name: ''
     };
