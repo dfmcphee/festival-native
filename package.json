@@ -1,0 +1,16 @@
+{
+  "name": "festival",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node_modules/react-native/packager/packager.sh"
+  },
+  "dependencies": {
+    "babel-core": "^5.8.25",
+    "react-native": "^0.11.2",
+    "react-native-background-geolocation": "0.0.8",
+    "react-native-mapbox-gl": "^0.4.2",
+    "react-native-vector-icons": "^0.7.1",
+    "socket.io-client": "^1.3.7"
+  }
+}
